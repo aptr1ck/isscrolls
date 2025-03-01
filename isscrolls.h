@@ -82,8 +82,6 @@ void convert_to_lowercase(char *);
 void read_oracle_from_json(int, int);
 
 /* readline.c */
-char ** my_completion(const char *, int, int);
-char* command_generator(const char *, int);
 void initialize_readline(const char *);
 void execute_command(char *);
 char* stripwhite (char *);

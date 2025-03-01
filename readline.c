@@ -20,6 +20,9 @@
 #include <include/isocline.h>
 #include "isscrolls.h"
 
+// completion function defined below
+static void completer(ic_completion_env_t* cenv, const char* prefix );
+
 static struct command commands[] = {
 	{ "cd", cmd_cd, "Switch to or from a character", 0, 0 },
 	{ "cds", cmd_cds, "Switch to a character and show all vows", 0, 0 },
@@ -180,46 +183,14 @@ initialize_readline(const char *base_path)
 	char hist_path[_POSIX_PATH_MAX];
 
 	//rl_attempted_completion_function = my_completion;
+	ic_set_default_completer(&completer, NULL);
+
+	// try to auto complete after a completion as long as the completion is unique
+	ic_enable_auto_tab(true );
 
 	// Set history file location, and set max (255?) number of entries.
 	snprintf(hist_path, _POSIX_PATH_MAX, "%s/history", base_path);
 	ic_set_history(hist_path,-1);
-}
-
-char **
-my_completion(const char *text, int start, __attribute__((unused))int end)
-{
-	char **matches;
-
-	matches = (char **)NULL;
-
-	//if (start == 0)
-	//	matches = rl_completion_matches(text, command_generator);
-
-	return matches;
-}
-
-char *
-command_generator(const char *text, int state)
-{
-	const char *name;
-	static int list_index;
-	static size_t len;
-
-	if (!state) {
-		list_index = 0;
-		len = strlen(text);
-	}
-
-	while ((name = commands[list_index].name)) {
-		list_index++;
-
-		if (strncmp(name, text, len) == 0) {
-			return strdup(name);
-		}
-	}
-
-	return (char *)NULL;
 }
 
 void
@@ -259,4 +230,41 @@ execute_command(char *line)
 
 	((*(cmd->cmd)) (word));
 	return;
+}
+
+// -------------------------------------------------------------------------------
+// Completion
+// -------------------------------------------------------------------------------
+
+// A custom completer function.
+// Use `ic_add_completion( env, replacement, display, help)` to add actual completions.
+static void word_completer(ic_completion_env_t* cenv, const char* word ) 
+{
+  // complete with list of words; only if the input is a word it will be a completion candidate
+  static const char* completions[] = { "help", NULL };
+  int i;
+  int j = 0;
+  int num = (sizeof(commands) / sizeof(commands[0]))-1;
+  for( i=0; i<=num; i++ ){
+	  if( commands[i].name == NULL ) {
+		  break;
+	  }
+	  if( strstr(commands[i].name,"--- ") == NULL ) {
+		  j++;
+		  completions[j] = commands[i].name;
+		  //printf(completions[j]);
+		  log_debug("Adding completion: %s", completions[j]);
+		  completions[j+1] = NULL;
+	  }
+  }
+  ic_add_completions(cenv, word, completions);
+}
+
+// A completer function is called by isocline to complete. The input parameter is the input up to the cursor.
+// We use `ic_complete_word` to only consider the final token on the input. 
+// (almost all user defined completers should use this)
+static void completer(ic_completion_env_t* cenv, const char* input ) 
+{
+  // Use our custom completer  
+  ic_complete_word( cenv, input, &word_completer, NULL /* from default word boundary; whitespace or separator */ );        
 }
