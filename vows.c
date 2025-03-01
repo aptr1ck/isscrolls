@@ -20,10 +20,10 @@
 #include <string.h>
 
 #include <json-c/json.h>
-#include <readline/readline.h>
-#include <readline/history.h>
-
+#include <include/isocline.h>
 #include "isscrolls.h"
+
+static char prompt[MAX_PROMPT_LEN];
 
 void
 cmd_create_new_vow(char *title)
@@ -47,8 +47,7 @@ cmd_create_new_vow(char *title)
 		snprintf(curchar->vow->title, MAX_VOW_TITLE, "%s", title);
 	} else {
 again:
-		printf("Enter a tile for your vow [max 25 chars]: ");
-		curchar->vow->title = readline(NULL);
+		curchar->vow->title = ic_readline("Enter a tile for your vow [max 25 chars]: ");
 		if (curchar->vow->title != NULL && strlen(curchar->vow->title) == 0) {
 			printf("The title must contain at least one character\n");
 			free(curchar->vow->title);
@@ -59,8 +58,7 @@ again:
 	log_debug("New vow titled '%s'\n", curchar->vow->title);
 
 descagain:
-	printf("Enter a description for your vow [max 255 chars]: ");
-	curchar->vow->description = readline(NULL);
+	curchar->vow->description = ic_readline("Enter a description for your vow [max 255 chars]: ");
 	if (curchar->vow->description != NULL &&
 		strlen(curchar->vow->description) == 0) {
 		printf("The description must contain at least one character\n");

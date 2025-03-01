@@ -26,8 +26,7 @@
 #include <time.h>
 #include <unistd.h>
 
-#include <readline/readline.h>
-#include <readline/history.h>
+#include <include/isocline.h>
 
 #include "isscrolls.h"
 
@@ -107,7 +106,7 @@ main(int argc, char **argv)
 
 	setup_base_dir();
 
-	initialize_readline(isscrolls_dir);
+	//initialize_readline(isscrolls_dir);
 
 	if (banner)
 		show_banner(NULL);
@@ -123,13 +122,13 @@ main(int argc, char **argv)
 		set_prompt("> ");
 
 	while (!sflag) {
-		line = readline(prompt);
+		line = ic_readline(prompt);
 		if (line == NULL)
 			continue;
 		res = stripwhite(line);
 
 		if (*res) {
-			add_history(res);
+			ic_history_add(res);
 			execute_command(res);
 		}
 
@@ -193,7 +192,7 @@ initiate_shutdown(int exit_code)
 	}
 
 	log_debug("Writing history to %s\n", hist_path);
-	write_history(hist_path);
+	//write_history(hist_path);
 
 	exit(exit_code);
 }

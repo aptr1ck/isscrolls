@@ -8,12 +8,12 @@ CFLAGS += -Wall -Werror-implicit-function-declaration -Wno-format-truncation
 CFLAGS += -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations
 CFLAGS += -Wshadow -Wpointer-arith -Wcast-qual -Wswitch-enum
 CFLAGS += -Wuninitialized -Wformat-security -Wformat-overflow=2
-CFLAGS += -Wextra -I/usr/local/include
+CFLAGS += -Wextra -I/usr/local/include -Iisocline
 CFLAGS += `pkg-config --cflags json-c`
-LDADD   = `pkg-config --libs json-c` -lreadline
+LDADD   = `pkg-config --libs json-c`
 
 BIN   = isscrolls
-OBJS  = isscrolls.o rolls.o readline.o character.o oracle.o journey.o fight.o
+OBJS  = isscrolls.o readline.o rolls.o character.o oracle.o journey.o fight.o
 OBJS += delve.o vows.o sundered_isles.o
 
 INSTALL ?= install -p
@@ -38,7 +38,7 @@ uninstall:
 	rm -f $(BIND)/isscrolls
 
 $(BIN): $(OBJS)
-	$(CC) $(LDFLAGS) -o $@ $(OBJS) $(LDADD)
+	$(CC) $(LDFLAGS) -o $@ $(OBJS) $(LDADD) isocline/src/isocline.c
 
 .c.o:
 	$(CC) $(CFLAGS) -o $@ -c $<

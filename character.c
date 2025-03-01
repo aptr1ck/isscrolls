@@ -23,8 +23,7 @@
 #include <string.h>
 
 #include <json-c/json.h>
-#include <readline/readline.h>
-#include <readline/history.h>
+#include <include/isocline.h>
 
 #include "isscrolls.h"
 
@@ -1247,7 +1246,7 @@ ask_for_value(const char *attribute, int max)
 	int temp = -1;
 
 again:
-	line = readline(attribute);
+	line = ic_readline(attribute);
 	if (line == NULL)
 		goto again;
 
@@ -1289,7 +1288,7 @@ create_character(const char *name)
 
 	if (strlen(name) == 0) {
 		printf("Enter a name for your character: ");
-		c->name = readline(NULL);
+		c->name = ic_readline(NULL);
 		if (c->name != NULL && strlen(c->name) == 0) {
 			printf("Please provide a longer name\n");
 			free_character();

@@ -17,9 +17,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <readline/readline.h>
-#include <readline/history.h>
-
+#include <include/isocline.h>
 #include "isscrolls.h"
 
 static struct command commands[] = {
@@ -181,16 +179,16 @@ initialize_readline(const char *base_path)
 {
 	char hist_path[_POSIX_PATH_MAX];
 
-	rl_readline_name = "issrolls";
+	char *rl_readline_name = "issrolls";
 
-	rl_attempted_completion_function = my_completion;
+	//rl_attempted_completion_function = my_completion;
 
-	using_history();
+	ic_set_history(rl_readline_name,-1); //using_history();
 
 	snprintf(hist_path, _POSIX_PATH_MAX, "%s/history", base_path);
 
 	log_debug("Reading history from %s\n", hist_path);
-	read_history(hist_path);
+	//read_history(hist_path);
 }
 
 char **
@@ -200,8 +198,8 @@ my_completion(const char *text, int start, __attribute__((unused))int end)
 
 	matches = (char **)NULL;
 
-	if (start == 0)
-		matches = rl_completion_matches(text, command_generator);
+	//if (start == 0)
+	//	matches = rl_completion_matches(text, command_generator);
 
 	return matches;
 }
