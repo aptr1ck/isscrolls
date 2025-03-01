@@ -68,8 +68,9 @@ show_banner(__attribute__((unused)) char *unused)
 	printf("                                                            Version %s\n\n", VERSION);
 
 	printf("\tPlayer toolkit for the Ironsworn RPG family\n");
-	printf("\tBy Matthias Schmidt - https://cybervillains.com/@_xhr_\n\n");
-	printf("Enter 'help' for available commands\n\n");
+	printf("\tBy Matthias Schmidt - https://cybervillains.com/@_xhr_\n");
+	printf("\tModded by Patrick McDermott - https://mcd.omg.lol\n\n");
+        printf("Enter 'help' for available commands\n\n");
 }
 
 int
@@ -106,7 +107,7 @@ main(int argc, char **argv)
 
 	setup_base_dir();
 
-	//initialize_readline(isscrolls_dir);
+	initialize_readline(isscrolls_dir);
 
 	if (banner)
 		show_banner(NULL);
@@ -128,7 +129,6 @@ main(int argc, char **argv)
 		res = stripwhite(line);
 
 		if (*res) {
-			ic_history_add(res);
 			execute_command(res);
 		}
 
@@ -146,9 +146,9 @@ set_prompt(const char *p)
 	if (p == NULL || strlen(p) == 0)
 		return;
 
-	if (color)
-		snprintf(prompt, sizeof(prompt), "%s%s%s", ANSI_COLOR_BOLD, p, ANSI_COLOR_RESET);
-	else
+	//if (color)
+	//	snprintf(prompt, sizeof(prompt), "%s%s%s", ANSI_COLOR_BOLD, p, ANSI_COLOR_RESET);
+	//else
 		snprintf(prompt, sizeof(prompt), "%s", p);
 }
 
@@ -185,14 +185,6 @@ initiate_shutdown(int exit_code)
 	int ret;
 
 	save_current_character();
-
-	ret = snprintf(hist_path, sizeof(hist_path), "%s/history", isscrolls_dir);
-	if (ret < 0 || (size_t)ret >= sizeof(hist_path)) {
-		printf("Path truncation happened.  Buffer to short to fit %s\n", hist_path);
-	}
-
-	log_debug("Writing history to %s\n", hist_path);
-	//write_history(hist_path);
 
 	exit(exit_code);
 }

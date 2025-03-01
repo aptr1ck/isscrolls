@@ -179,16 +179,11 @@ initialize_readline(const char *base_path)
 {
 	char hist_path[_POSIX_PATH_MAX];
 
-	char *rl_readline_name = "issrolls";
-
 	//rl_attempted_completion_function = my_completion;
 
-	ic_set_history(rl_readline_name,-1); //using_history();
-
+	// Set history file location, and set max (255?) number of entries.
 	snprintf(hist_path, _POSIX_PATH_MAX, "%s/history", base_path);
-
-	log_debug("Reading history from %s\n", hist_path);
-	//read_history(hist_path);
+	ic_set_history(hist_path,-1);
 }
 
 char **

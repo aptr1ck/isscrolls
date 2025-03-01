@@ -367,7 +367,6 @@ update_prompt(void)
 	}
 
 	snprintf(p, sizeof(p), "%s%s > %s%s%s%s", curchar->name, v, j, e, d, f);
-
 	set_prompt(p);
 }
 
@@ -1287,8 +1286,7 @@ create_character(const char *name)
 	c = init_character_struct();
 
 	if (strlen(name) == 0) {
-		printf("Enter a name for your character: ");
-		c->name = ic_readline(NULL);
+		c->name = ic_readline("Enter a name for your character: ");
 		if (c->name != NULL && strlen(c->name) == 0) {
 			printf("Please provide a longer name\n");
 			free_character();

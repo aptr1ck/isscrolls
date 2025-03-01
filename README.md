@@ -10,6 +10,10 @@ Visually impaired players should run isscrolls with the `-b` option to suppress 
 
 ![isscrolls screenshot](https://xosc.org/misc/is-202209.png)
 
+## Reason for the Fork
+
+So far, the only difference between this and thexhr's version is that I have removed readline, and used [isocline](https://github.com/daanx/isocline) instead. I did this because readline didn't work when I compiled isscrolls on Alpine linux running on iSh on my iPad. iSh is missing a required system call.
+
 ## Features
 
 The following game mechanics are implemented.  Some moves are omitted on purpose since it makes little sense to implement them in software, they have to be played by the player.
