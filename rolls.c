@@ -318,12 +318,44 @@ info:
 		printf("Pay the price -> Rulebook\n");
 }
 
+// Modified version from character.c
+// Used only for roll action dice function below.
+int
+return_char_stat_all(char *stat)
+{
+	struct character *curchar = get_current_character();
+	
+	if (curchar == NULL) {
+		log_debug("No character loaded.\n");
+		printf("No character loaded.\n");
+		return -1;
+	}
+
+	if (strcasecmp(stat, "wits") == 0) {
+		return curchar->wits;
+	} else if (strcasecmp(stat, "shadow") == 0 ) {
+		return curchar->shadow;
+	} else if (strcasecmp(stat, "edge") == 0 ) {
+		return curchar->edge;
+	} else if (strcasecmp(stat, "iron") == 0 ) {
+		return curchar->iron;
+	} else if (strcasecmp(stat, "heart") == 0 ) {
+		return curchar->heart;
+	} else if (strcasecmp(stat, "supply") == 0) {
+		return curchar->supply;
+	} else if (strcasecmp(stat, "spirit") == 0) {
+		return curchar->spirit;
+	} else
+		return -1;
+}
+
 void
 cmd_roll_action_dice(char *cmd)
 {
 	char *ep;
 	char *tokens[MAXTOKENS];
 	char *p, *last;
+	struct character *curchar = get_current_character();
 	int i = 0;
 	long lval[2];
 	int ival[2] = { -1, -1 };
@@ -332,8 +364,9 @@ cmd_roll_action_dice(char *cmd)
 		printf("Please provide at least one attribute value\n\n");
 		printf("> action <attribute value> [bonus value]\n\n");
 		printf("Examples:\n");
-		printf("> action 3\t- Add 3 to the D6 die\n");
-		printf("> action 4 1\t- Add 4 and additionally 1 to the D6 die\n\n");
+		printf("> roll 3\t- Add 3 to the D6 die\n");
+		printf("> roll 4 1\t- Add 4 and additionally 1 to the D6 die\n");
+		printf("> roll supply\t- Add the value of supply to the D6 die\n\n");
 
 		return;
 	}
@@ -354,8 +387,15 @@ cmd_roll_action_dice(char *cmd)
 		errno = 0;
 		lval[i] = strtol(tokens[i], &ep, 10);
 		if (cmd[0] == '\0' || *ep != '\0') {
-			printf("Please provide a number as argument\n");
-			return;
+			// Use value for stat if we recognise it.
+			int lstat = return_char_stat_all(tokens[i]);
+			if (lstat != -1) {
+				lval[i] = lstat;
+			} else {
+				printf(":%s:\n",tokens[i]);
+				printf("Please provide a number as argument\n");
+				return;
+			}
 		}
 		if ((errno == ERANGE || lval[i] <= 0 || lval[i] > 10)) {
 			printf("Please provide a number between 1 and 10\n");
